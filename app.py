@@ -711,6 +711,53 @@ st.markdown(
         background-color: #F6F7FB !important;
     }}
 
+
+
+    /* ---------- Light theme hard-fix: number input / text input ---------- */
+    div[data-testid="stNumberInput"] div[data-baseweb="input"],
+    div[data-testid="stTextInput"] div[data-baseweb="input"],
+    div[data-testid="stSelectbox"] div[data-baseweb="select"],
+    div[data-baseweb="base-input"],
+    div[data-baseweb="input"] {
+        background-color: #FFFFFF !important;
+        color: #181B2A !important;
+        border-color: #D9DDE8 !important;
+        border-radius: 10px !important;
+    }
+    div[data-testid="stNumberInput"] input,
+    div[data-testid="stTextInput"] input,
+    div[data-baseweb="input"] input,
+    div[data-baseweb="base-input"] input {
+        background-color: #FFFFFF !important;
+        color: #181B2A !important;
+        -webkit-text-fill-color: #181B2A !important;
+    }
+    div[data-testid="stNumberInput"] button {
+        background-color: #FFFFFF !important;
+        color: #181B2A !important;
+        border-color: #D9DDE8 !important;
+    }
+    div[data-testid="stNumberInput"] button * {
+        color: #181B2A !important;
+    }
+
+    /* ---------- Data editor light-mode hard-fix ---------- */
+    div[data-testid="stDataEditor"] {
+        background-color: #FFFFFF !important;
+        border: 1px solid #E4E7F1 !important;
+        border-radius: 14px !important;
+        overflow: hidden !important;
+    }
+    div[data-testid="stDataEditor"] * {
+        color: #181B2A !important;
+    }
+    div[data-testid="stDataEditor"] [class*="glideDataEditor"],
+    div[data-testid="stDataEditor"] [class*="dvn"],
+    div[data-testid="stDataEditor"] canvas,
+    div[data-testid="stDataEditor"] div[role="grid"] {
+        background-color: #FFFFFF !important;
+    }
+
     /* ---------- 알림 박스 ---------- */
     div[data-testid="stAlert"] {{
         border-radius: 12px;
@@ -1296,7 +1343,7 @@ elif page == "🔮 예측 데모":
         force_no_visit = (visit_days_raw == 0) or (days_to_first_raw == -1)
 
         with col3:
-            total_access_raw = st.number_input(
+            total_access_raw = st.slider(
                 "총 출입횟수",
                 min_value=0,
                 max_value=TOTAL_ACCESS_MAX,
