@@ -622,6 +622,52 @@ st.markdown(
     div[data-testid="stAlert"] {{
         border-radius: 12px;
     }}
+    /* ---------- Text Input ---------- */
+    div[data-baseweb="input"] {{
+        background: white !important;
+        border: 1px solid #D9DDE8 !important;
+        border-radius: 10px !important;
+    }}
+    
+    div[data-baseweb="input"] input {{
+        background: white !important;
+        color: #1F2937 !important;
+    }}
+    
+    div[data-baseweb="input"] input::placeholder {{
+        color: #9CA3AF !important;
+    }}
+    
+    /* ---------- Text Area ---------- */
+    div[data-baseweb="textarea"] {{
+        background: white !important;
+        border: 1px solid #D9DDE8 !important;
+        border-radius: 10px !important;
+    }}
+    
+    div[data-baseweb="textarea"] textarea {{
+        background: white !important;
+        color: #1F2937 !important;
+    }}
+    
+    /* ---------- File Uploader ---------- */
+    [data-testid="stFileUploader"] section {{
+        background: white !important;
+        border: 2px dashed #D9DDE8 !important;
+        border-radius: 12px !important;
+    }}
+    
+    [data-testid="stFileUploader"] button {{
+        background: #FFFFFF !important;
+        color: #374151 !important;
+        border: 1px solid #D9DDE8 !important;
+    }}
+    
+    [data-testid="stFileUploader"] small,
+    [data-testid="stFileUploader"] span,
+    [data-testid="stFileUploader"] p {{
+        color: #6B7280 !important;
+    }}
     </style>
     """,
     unsafe_allow_html=True,
