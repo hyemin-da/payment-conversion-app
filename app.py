@@ -624,58 +624,58 @@ st.markdown(
     /* st.code() block */
     div[data-testid="stCodeBlock"],
     div[data-testid="stCodeBlock"] pre,
-    div[data-testid="stCodeBlock"] code {
+    div[data-testid="stCodeBlock"] code {{
         background: #FFFFFF !important;
         color: #181B2A !important;
         border-color: #E4E7F1 !important;
         font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif !important;
-    }
-    div[data-testid="stCodeBlock"] {
+    }}
+    div[data-testid="stCodeBlock"] {{
         border: 1px solid #E4E7F1 !important;
         border-radius: 12px !important;
         overflow: hidden !important;
-    }
-    div[data-testid="stCodeBlock"] pre {
+    }}
+    div[data-testid="stCodeBlock"] pre {{
         padding: 16px 18px !important;
-    }
+    }}
 
     /* Download button */
-    div[data-testid="stDownloadButton"] button {
+    div[data-testid="stDownloadButton"] button {{
         background: #FFFFFF !important;
         color: #181B2A !important;
         border: 1px solid #D9DDE8 !important;
         border-radius: 10px !important;
         font-weight: 700 !important;
-    }
-    div[data-testid="stDownloadButton"] button * {
+    }}
+    div[data-testid="stDownloadButton"] button * {{
         color: #181B2A !important;
-    }
-    div[data-testid="stDownloadButton"] button:hover {
+    }}
+    div[data-testid="stDownloadButton"] button:hover {{
         border-color: #3D4FE0 !important;
         color: #3D4FE0 !important;
-    }
-    div[data-testid="stDownloadButton"] button:hover * {
+    }}
+    div[data-testid="stDownloadButton"] button:hover * {{
         color: #3D4FE0 !important;
-    }
+    }}
 
     /* File uploader */
-    [data-testid="stFileUploader"] section {
+    [data-testid="stFileUploader"] section {{
         background: #FFFFFF !important;
         border: 2px dashed #D9DDE8 !important;
         border-radius: 14px !important;
-    }
-    [data-testid="stFileUploader"] section * {
+    }}
+    [data-testid="stFileUploader"] section * {{
         color: #3F4356 !important;
-    }
-    [data-testid="stFileUploader"] button {
+    }}
+    [data-testid="stFileUploader"] button {{
         background: #FFFFFF !important;
         color: #374151 !important;
         border: 1px solid #D9DDE8 !important;
         border-radius: 10px !important;
-    }
-    [data-testid="stFileUploader"] button * {
+    }}
+    [data-testid="stFileUploader"] button * {{
         color: #374151 !important;
-    }
+    }}
 
     /* Data editor / dataframe bright override */
     [data-testid="stDataEditor"],
@@ -685,31 +685,31 @@ st.markdown(
     [data-testid="stDataEditor"] tbody,
     [data-testid="stDataEditor"] tr,
     [data-testid="stDataEditor"] th,
-    [data-testid="stDataEditor"] td {
+    [data-testid="stDataEditor"] td {{
         background-color: #FFFFFF !important;
         color: #181B2A !important;
-    }
+    }}
     [data-testid="stDataEditor"] th,
-    [data-testid="stDataEditor"] [role="columnheader"] {
+    [data-testid="stDataEditor"] [role="columnheader"] {{
         background-color: #F6F7FB !important;
         color: #181B2A !important;
         font-weight: 800 !important;
-    }
+    }}
     [data-testid="stDataEditor"] input,
-    [data-testid="stDataEditor"] textarea {
+    [data-testid="stDataEditor"] textarea {{
         background-color: #FFFFFF !important;
         color: #181B2A !important;
-    }
+    }}
     [data-testid="stDataEditor"] [role="gridcell"],
     [data-testid="stDataEditor"] [role="columnheader"],
-    [data-testid="stDataEditor"] [role="row"] {
+    [data-testid="stDataEditor"] [role="row"] {{
         background-color: #FFFFFF !important;
         color: #181B2A !important;
         border-color: #E4E7F1 !important;
-    }
-    [data-testid="stDataEditor"] [role="columnheader"] {
+    }}
+    [data-testid="stDataEditor"] [role="columnheader"] {{
         background-color: #F6F7FB !important;
-    }
+    }}
 
     /* ---------- 알림 박스 ---------- */
     div[data-testid="stAlert"] {{
