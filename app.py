@@ -3,7 +3,6 @@ import pandas as pd
 import numpy as np
 import joblib
 import platform
-import html
 from pathlib import Path
 
 import matplotlib.pyplot as plt
@@ -722,76 +721,126 @@ st.markdown(
 )
 
 
-# Streamlit Cloud의 dataframe/data_editor는 canvas 기반이라 CSS가 잘 먹지 않아,
-# 표시용 표와 수기 입력 영역은 아래 custom light UI로 대체합니다.
+# =========================================================
+# Streamlit Cloud Light Mode Patch
+# - 기존 UI/컴포넌트 구조는 변경하지 않고, 기본 위젯 색상만 라이트 모드로 보정합니다.
+# =========================================================
 st.markdown(
     """
     <style>
-    .light-table-wrap {
-        background: #FFFFFF;
-        border: 1px solid #E4E7F1;
-        border-radius: 14px;
-        overflow: hidden;
-        box-shadow: 0 2px 10px rgba(24, 27, 42, 0.04);
-        margin: 8px 0 18px 0;
+    /* ---------- BaseWeb inputs: number_input / text_input ---------- */
+    div[data-baseweb="input"],
+    div[data-baseweb="base-input"] {
+        background-color: #FFFFFF !important;
+        border-color: #D9DDE8 !important;
+        color: #181B2A !important;
     }
-    table.light-table {
-        width: 100%;
-        border-collapse: collapse;
-        font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
-        color: #181B2A;
-        background: #FFFFFF;
-        font-size: 0.92rem;
+    div[data-baseweb="input"] input,
+    div[data-baseweb="base-input"] input {
+        background-color: #FFFFFF !important;
+        color: #181B2A !important;
+        -webkit-text-fill-color: #181B2A !important;
     }
-    table.light-table thead th {
-        background: #F6F7FB;
-        color: #3F4356;
-        font-weight: 800;
-        text-align: left;
-        padding: 12px 14px;
-        border-bottom: 1px solid #E4E7F1;
-        white-space: nowrap;
-    }
-    table.light-table tbody td {
-        background: #FFFFFF;
-        color: #181B2A;
-        padding: 12px 14px;
-        border-bottom: 1px solid #EEF0F6;
-        white-space: nowrap;
-    }
-    table.light-table tbody tr:last-child td { border-bottom: none; }
-    table.light-table tbody tr:hover td { background: #F9FAFE; }
-
-    div[data-testid="stTextInput"] input,
-    div[data-testid="stNumberInput"] input,
-    div[data-baseweb="input"] input {
+    div[data-baseweb="input"] button,
+    div[data-baseweb="base-input"] button,
+    div[data-testid="stNumberInput"] button {
         background-color: #FFFFFF !important;
         color: #181B2A !important;
         border-color: #D9DDE8 !important;
     }
-    div[data-testid="stTextInput"] > div,
-    div[data-testid="stNumberInput"] > div,
-    div[data-baseweb="input"] {
+    div[data-baseweb="input"] button svg,
+    div[data-baseweb="base-input"] button svg,
+    div[data-testid="stNumberInput"] button svg {
+        color: #181B2A !important;
+        fill: #181B2A !important;
+    }
+
+    /* ---------- File uploader ---------- */
+    [data-testid="stFileUploader"] section {
+        background-color: #FFFFFF !important;
+        border: 2px dashed #D9DDE8 !important;
+        border-radius: 14px !important;
+    }
+    [data-testid="stFileUploader"] section *,
+    [data-testid="stFileUploader"] small,
+    [data-testid="stFileUploader"] span,
+    [data-testid="stFileUploader"] p {
+        color: #3F4356 !important;
+    }
+    [data-testid="stFileUploader"] button {
+        background-color: #FFFFFF !important;
+        color: #374151 !important;
+        border: 1px solid #D9DDE8 !important;
+        border-radius: 10px !important;
+    }
+    [data-testid="stFileUploader"] button * {
+        color: #374151 !important;
+    }
+
+    /* ---------- Download button ---------- */
+    div[data-testid="stDownloadButton"] button,
+    .stDownloadButton > button {
         background-color: #FFFFFF !important;
         color: #181B2A !important;
+        border: 1px solid #D9DDE8 !important;
+        border-radius: 10px !important;
+        font-weight: 700 !important;
     }
-    div[data-testid="stTextInput"] input::placeholder {
-        color: #9CA3AF !important;
+    div[data-testid="stDownloadButton"] button *,
+    .stDownloadButton > button * {
+        color: #181B2A !important;
     }
-    .manual-table-head {
-        display: grid;
-        grid-template-columns: 1.2fr 1fr 1fr 1.5fr;
-        gap: 12px;
-        margin-top: 14px;
-        margin-bottom: 6px;
-        color: #3F4356;
-        font-weight: 800;
-        font-size: 0.92rem;
+
+    /* ---------- Code block ---------- */
+    div[data-testid="stCodeBlock"],
+    div[data-testid="stCodeBlock"] pre,
+    div[data-testid="stCodeBlock"] code {
+        background-color: #FFFFFF !important;
+        color: #181B2A !important;
+        border-color: #E4E7F1 !important;
+        font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif !important;
     }
-    .manual-row-sep {
-        height: 1px;
-        background: #EEF0F6;
-        margin: 4px 0 10px 0;
+    div[data-testid="stCodeBlock"] {
+        border: 1px solid #E4E7F1 !important;
+        border-radius: 12px !important;
+        overflow: hidden !important;
+    }
+
+    /* ---------- DataFrame / DataEditor frame ---------- */
+    div[data-testid="stDataFrame"],
+    div[data-testid="stDataEditor"] {
+        background-color: #FFFFFF !important;
+        border: 1px solid #E4E7F1 !important;
+        border-radius: 12px !important;
+        overflow: hidden !important;
+    }
+    div[data-testid="stDataFrame"] *,
+    div[data-testid="stDataEditor"] * {
+        font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif !important;
+    }
+    div[data-testid="stDataFrame"] [role="grid"],
+    div[data-testid="stDataEditor"] [role="grid"],
+    div[data-testid="stDataFrame"] [role="row"],
+    div[data-testid="stDataEditor"] [role="row"],
+    div[data-testid="stDataFrame"] [role="gridcell"],
+    div[data-testid="stDataEditor"] [role="gridcell"],
+    div[data-testid="stDataFrame"] [role="columnheader"],
+    div[data-testid="stDataEditor"] [role="columnheader"] {
+        background-color: #FFFFFF !important;
+        color: #181B2A !important;
+        border-color: #E4E7F1 !important;
+    }
+    div[data-testid="stDataFrame"] [role="columnheader"],
+    div[data-testid="stDataEditor"] [role="columnheader"] {
+        background-color: #F6F7FB !important;
+        color: #181B2A !important;
+        font-weight: 800 !important;
+    }
+    div[data-testid="stDataEditor"] input,
+    div[data-testid="stDataEditor"] textarea {
+        background-color: #FFFFFF !important;
+        color: #181B2A !important;
+        -webkit-text-fill-color: #181B2A !important;
     }
     </style>
     """,
@@ -821,40 +870,6 @@ def section_label(icon: str, title: str, caption: str = ""):
     )
     if caption:
         st.markdown(f"""<div class="section-caption">{caption}</div>""", unsafe_allow_html=True)
-
-
-def render_light_table(table_df: pd.DataFrame, max_rows: int | None = None, index: bool = False):
-    """Streamlit 기본 dataframe이 다크모드로 보이는 문제를 피하기 위한 HTML 표 렌더러."""
-    display_df = table_df.copy()
-    if max_rows is not None:
-        display_df = display_df.head(max_rows)
-    html_table = display_df.to_html(
-        index=index,
-        escape=True,
-        classes="light-table",
-        border=0,
-    )
-    st.markdown(f'<div class="light-table-wrap">{html_table}</div>', unsafe_allow_html=True)
-
-
-def format_percent_table(table_df: pd.DataFrame, percent_cols: list[str]) -> pd.DataFrame:
-    """지정 컬럼을 보기 좋은 퍼센트 문자열로 변환."""
-    formatted = table_df.copy()
-    for col in percent_cols:
-        if col in formatted.columns:
-            formatted[col] = formatted[col].map(
-                lambda x: f"{float(x):.1f}%" if pd.notna(x) and float(x) > 1 else f"{float(x) * 100:.1f}%" if pd.notna(x) else ""
-            )
-    return formatted
-
-
-def parse_int_input(value, default: int, min_value: int, max_value: int) -> int:
-    """text_input으로 받은 숫자를 안전하게 정수로 변환하고 범위를 제한."""
-    try:
-        parsed = int(float(str(value).strip()))
-    except Exception:
-        parsed = default
-    return int(max(min_value, min(max_value, parsed)))
 
 
 # =========================
@@ -1408,13 +1423,14 @@ elif page == "🔮 예측 데모":
         force_no_visit = (visit_days_raw == 0) or (days_to_first_raw == -1)
 
         with col3:
-            total_access_raw_text = st.text_input(
+            total_access_raw = st.number_input(
                 "총 출입횟수",
-                value=str(0 if force_no_visit else 4),
+                min_value=0,
+                max_value=TOTAL_ACCESS_MAX,
+                value=0 if force_no_visit else 4,
+                step=1,
                 disabled=force_no_visit,
-                help=f"0~{TOTAL_ACCESS_MAX} 사이의 정수를 입력하세요.",
             )
-            total_access_raw = parse_int_input(total_access_raw_text, default=0 if force_no_visit else 4, min_value=0, max_value=TOTAL_ACCESS_MAX)
 
         if force_no_visit:
             visit_days = 0
@@ -1516,9 +1532,7 @@ elif page == "🔮 예측 데모":
             st.pyplot(fig2)
             plt.close(fig2)
 
-            sim_display_df = sim_df.copy()
-            sim_display_df["결제확률"] = sim_display_df["결제확률"].map(lambda x: f"{x:.1%}")
-            render_light_table(sim_display_df)
+            st.dataframe(sim_df.style.format({"결제확률": "{:.1%}"}), use_container_width=True)
 
     # -------------------------
     # 2. CSV 업로드 예측
@@ -1567,7 +1581,7 @@ elif page == "🔮 예측 데모":
             try:
                 uploaded_df = read_uploaded_csv(uploaded_file)
                 st.write("업로드 데이터 미리보기")
-                render_light_table(uploaded_df.head(20))
+                st.dataframe(uploaded_df.head(20), use_container_width=True)
 
                 missing_columns = [col for col in BEST_FEATURES if col not in uploaded_df.columns]
                 if missing_columns:
@@ -1590,10 +1604,11 @@ elif page == "🔮 예측 데모":
                     ]
                     display_cols = [col for col in display_cols if col in result_df.columns]
 
-                    result_display_df = result_df[display_cols].copy()
-                    if "결제전환확률(%)" in result_display_df.columns:
-                        result_display_df["결제전환확률(%)"] = result_display_df["결제전환확률(%)"].map(lambda x: f"{x:.1f}%")
-                    render_light_table(result_display_df, max_rows=50)
+                    st.dataframe(
+                        result_df[display_cols].style.format({"결제전환확률(%)": "{:.1f}%"})
+                        .background_gradient(subset=["결제전환확률(%)"], cmap="Blues"),
+                        use_container_width=True,
+                    )
 
                     st.download_button(
                         label="예측 결과 CSV 다운로드",
@@ -1619,66 +1634,18 @@ elif page == "🔮 예측 데모":
             "신청후첫방문일수": [0, 1, -1],
         })
 
-        row_count = st.slider("입력할 고객 수", min_value=1, max_value=10, value=3, step=1)
-        st.markdown(
-            """
-            <div class="manual-table-head">
-                <div>고객ID</div>
-                <div>방문일수</div>
-                <div>총출입횟수</div>
-                <div>신청 후 첫방문까지 걸린 일수</div>
-            </div>
-            """,
-            unsafe_allow_html=True,
+        edited_df = st.data_editor(
+            default_manual_df,
+            num_rows="dynamic",
+            use_container_width=True,
+            column_config={
+                "고객ID": st.column_config.TextColumn("고객ID"),
+                "방문일수": st.column_config.NumberColumn("방문일수", min_value=0, max_value=3, step=1),
+                "총출입횟수": st.column_config.NumberColumn("총출입횟수", min_value=0, max_value=TOTAL_ACCESS_MAX, step=1),
+                "신청후첫방문일수": st.column_config.NumberColumn("신청 후 첫방문까지 걸린 일수", min_value=-1, max_value=2, step=1),
+            },
+            key="manual_multi_input_editor",
         )
-
-        manual_rows = []
-        for i in range(row_count):
-            default_row = default_manual_df.iloc[i].to_dict() if i < len(default_manual_df) else {
-                "고객ID": f"고객_{i + 1}",
-                "방문일수": 0,
-                "총출입횟수": 0,
-                "신청후첫방문일수": -1,
-            }
-            c_id, c_visit, c_access, c_first = st.columns([1.2, 1, 1, 1.5])
-            with c_id:
-                customer_id = st.text_input(
-                    "고객ID",
-                    value=str(default_row["고객ID"]),
-                    key=f"manual_customer_id_{i}",
-                    label_visibility="collapsed",
-                )
-            with c_visit:
-                visit_input = st.text_input(
-                    "방문일수",
-                    value=str(default_row["방문일수"]),
-                    key=f"manual_visit_days_{i}",
-                    label_visibility="collapsed",
-                )
-            with c_access:
-                access_input = st.text_input(
-                    "총출입횟수",
-                    value=str(default_row["총출입횟수"]),
-                    key=f"manual_total_access_{i}",
-                    label_visibility="collapsed",
-                )
-            with c_first:
-                first_input = st.text_input(
-                    "신청 후 첫방문까지 걸린 일수",
-                    value=str(default_row["신청후첫방문일수"]),
-                    key=f"manual_days_to_first_{i}",
-                    label_visibility="collapsed",
-                )
-
-            manual_rows.append({
-                "고객ID": customer_id if str(customer_id).strip() else f"고객_{i + 1}",
-                "방문일수": parse_int_input(visit_input, default=0, min_value=0, max_value=3),
-                "총출입횟수": parse_int_input(access_input, default=0, min_value=0, max_value=TOTAL_ACCESS_MAX),
-                "신청후첫방문일수": parse_int_input(first_input, default=-1, min_value=-1, max_value=2),
-            })
-            st.markdown('<div class="manual-row-sep"></div>', unsafe_allow_html=True)
-
-        edited_df = pd.DataFrame(manual_rows)
 
         if st.button("수기 입력 고객 예측하기", type="primary", use_container_width=True):
             try:
@@ -1698,10 +1665,11 @@ elif page == "🔮 예측 데모":
                 ]
                 display_cols = [col for col in display_cols if col in result_df.columns]
 
-                manual_result_display_df = result_df[display_cols].copy()
-                if "결제전환확률(%)" in manual_result_display_df.columns:
-                    manual_result_display_df["결제전환확률(%)"] = manual_result_display_df["결제전환확률(%)"].map(lambda x: f"{x:.1f}%")
-                render_light_table(manual_result_display_df, max_rows=50)
+                st.dataframe(
+                    result_df[display_cols].style.format({"결제전환확률(%)": "{:.1f}%"})
+                    .background_gradient(subset=["결제전환확률(%)"], cmap="Blues"),
+                    use_container_width=True,
+                )
 
                 st.download_button(
                     label="수기 입력 예측 결과 CSV 다운로드",
