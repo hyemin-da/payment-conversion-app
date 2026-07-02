@@ -715,6 +715,12 @@ st.markdown(
     div[data-testid="stAlert"] {{
         border-radius: 12px;
     }}
+
+    /* number_input 테두리 */
+    div[data-testid="stNumberInput"] > div {{
+        border: 1.5px solid #222222 !important;
+        border-radius: 12px !important;
+    }}
     </style>
     """,
     unsafe_allow_html=True,
