@@ -718,7 +718,7 @@ st.markdown(
 
     /* number_input 테두리 */
     div[data-testid="stNumberInput"] > div {{
-        border: 1.5px solid #222222 !important;
+        border: 1px solid #C8CDD8 !important;
         border-radius: 12px !important;
     }}
     </style>
