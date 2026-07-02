@@ -618,66 +618,102 @@ st.markdown(
     }}
     hr {{ border-color: {BORDER} !important; }}
 
+
+
+    /* ---------- Bright mode fixes for Streamlit Cloud ---------- */
+    /* st.code() block */
+    div[data-testid="stCodeBlock"],
+    div[data-testid="stCodeBlock"] pre,
+    div[data-testid="stCodeBlock"] code {
+        background: #FFFFFF !important;
+        color: #181B2A !important;
+        border-color: #E4E7F1 !important;
+        font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif !important;
+    }
+    div[data-testid="stCodeBlock"] {
+        border: 1px solid #E4E7F1 !important;
+        border-radius: 12px !important;
+        overflow: hidden !important;
+    }
+    div[data-testid="stCodeBlock"] pre {
+        padding: 16px 18px !important;
+    }
+
+    /* Download button */
+    div[data-testid="stDownloadButton"] button {
+        background: #FFFFFF !important;
+        color: #181B2A !important;
+        border: 1px solid #D9DDE8 !important;
+        border-radius: 10px !important;
+        font-weight: 700 !important;
+    }
+    div[data-testid="stDownloadButton"] button * {
+        color: #181B2A !important;
+    }
+    div[data-testid="stDownloadButton"] button:hover {
+        border-color: #3D4FE0 !important;
+        color: #3D4FE0 !important;
+    }
+    div[data-testid="stDownloadButton"] button:hover * {
+        color: #3D4FE0 !important;
+    }
+
+    /* File uploader */
+    [data-testid="stFileUploader"] section {
+        background: #FFFFFF !important;
+        border: 2px dashed #D9DDE8 !important;
+        border-radius: 14px !important;
+    }
+    [data-testid="stFileUploader"] section * {
+        color: #3F4356 !important;
+    }
+    [data-testid="stFileUploader"] button {
+        background: #FFFFFF !important;
+        color: #374151 !important;
+        border: 1px solid #D9DDE8 !important;
+        border-radius: 10px !important;
+    }
+    [data-testid="stFileUploader"] button * {
+        color: #374151 !important;
+    }
+
+    /* Data editor / dataframe bright override */
+    [data-testid="stDataEditor"],
+    [data-testid="stDataEditor"] div,
+    [data-testid="stDataEditor"] table,
+    [data-testid="stDataEditor"] thead,
+    [data-testid="stDataEditor"] tbody,
+    [data-testid="stDataEditor"] tr,
+    [data-testid="stDataEditor"] th,
+    [data-testid="stDataEditor"] td {
+        background-color: #FFFFFF !important;
+        color: #181B2A !important;
+    }
+    [data-testid="stDataEditor"] th,
+    [data-testid="stDataEditor"] [role="columnheader"] {
+        background-color: #F6F7FB !important;
+        color: #181B2A !important;
+        font-weight: 800 !important;
+    }
+    [data-testid="stDataEditor"] input,
+    [data-testid="stDataEditor"] textarea {
+        background-color: #FFFFFF !important;
+        color: #181B2A !important;
+    }
+    [data-testid="stDataEditor"] [role="gridcell"],
+    [data-testid="stDataEditor"] [role="columnheader"],
+    [data-testid="stDataEditor"] [role="row"] {
+        background-color: #FFFFFF !important;
+        color: #181B2A !important;
+        border-color: #E4E7F1 !important;
+    }
+    [data-testid="stDataEditor"] [role="columnheader"] {
+        background-color: #F6F7FB !important;
+    }
+
     /* ---------- 알림 박스 ---------- */
     div[data-testid="stAlert"] {{
         border-radius: 12px;
-    }}
-    /* ---------- Text Input ---------- */
-    div[data-baseweb="input"] {{
-        background: white !important;
-        border: 1px solid #D9DDE8 !important;
-        border-radius: 10px !important;
-    }}
-    
-    div[data-baseweb="input"] input {{
-        background: white !important;
-        color: #1F2937 !important;
-    }}
-    
-    div[data-baseweb="input"] input::placeholder {{
-        color: #9CA3AF !important;
-    }}
-    
-    /* ---------- Text Area ---------- */
-    div[data-baseweb="textarea"] {{
-        background: white !important;
-        border: 1px solid #D9DDE8 !important;
-        border-radius: 10px !important;
-    }}
-    
-    div[data-baseweb="textarea"] textarea {{
-        background: white !important;
-        color: #1F2937 !important;
-    }}
-    
-    /* ---------- File Uploader ---------- */
-    [data-testid="stFileUploader"] section {{
-        background: white !important;
-        border: 2px dashed #D9DDE8 !important;
-        border-radius: 12px !important;
-    }}
-    
-    [data-testid="stFileUploader"] button {{
-        background: #FFFFFF !important;
-        color: #374151 !important;
-        border: 1px solid #D9DDE8 !important;
-    }}
-    
-    [data-testid="stFileUploader"] small,
-    [data-testid="stFileUploader"] span,
-    [data-testid="stFileUploader"] p {{
-        color: #6B7280 !important;
-    }}
-    
-    div[data-testid="stDownloadButton"] button {{
-        background: #FFFFFF !important;
-        color: #374151 !important;
-        border: 1px solid #D9DDE8 !important;
-        border-radius: 10px !important;
-    }}
-    
-    div[data-testid="stDownloadButton"] button * {{
-        color: #374151 !important;
     }}
     </style>
     """,
@@ -1377,10 +1413,22 @@ elif page == "🔮 예측 데모":
     with csv_tab:
         st.subheader("CSV 업로드로 여러 고객 예측")
         st.markdown("CSV 파일에는 아래 3개 컬럼이 필요합니다.")
+        required_cols_html = "".join(
+            f'<span style="display:inline-flex;align-items:center;gap:6px;background:#EEF0FD;color:#2B39B3;border:1px solid #D7DBFA;border-radius:999px;padding:7px 13px;font-weight:700;font-size:0.9rem;margin-right:8px;margin-bottom:8px;">✓ {col}</span>'
+            for col in BEST_FEATURES
+        )
         st.markdown(
             f"""
-            <div class="required-cols-box">
-                {", ".join(BEST_FEATURES)}
+            <div style="
+                background:#FFFFFF;
+                border:1px solid #E4E7F1;
+                border-radius:14px;
+                padding:18px 20px 12px 20px;
+                margin:10px 0 16px 0;
+                box-shadow:0 2px 10px rgba(24, 27, 42, 0.04);
+            ">
+                <div style="color:#181B2A;font-weight:800;font-size:0.95rem;margin-bottom:12px;">필수 컬럼</div>
+                <div>{required_cols_html}</div>
             </div>
             """,
             unsafe_allow_html=True,
