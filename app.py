@@ -668,6 +668,17 @@ st.markdown(
     [data-testid="stFileUploader"] p {{
         color: #6B7280 !important;
     }}
+    
+    div[data-testid="stDownloadButton"] button {{
+        background: #FFFFFF !important;
+        color: #374151 !important;
+        border: 1px solid #D9DDE8 !important;
+        border-radius: 10px !important;
+    }}
+    
+    div[data-testid="stDownloadButton"] button * {{
+        color: #374151 !important;
+    }}
     </style>
     """,
     unsafe_allow_html=True,
@@ -1366,7 +1377,14 @@ elif page == "🔮 예측 데모":
     with csv_tab:
         st.subheader("CSV 업로드로 여러 고객 예측")
         st.markdown("CSV 파일에는 아래 3개 컬럼이 필요합니다.")
-        st.code(", ".join(BEST_FEATURES), language="text")
+        st.markdown(
+            f"""
+            <div class="required-cols-box">
+                {", ".join(BEST_FEATURES)}
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
 
         sample_df = pd.DataFrame({
             "고객ID": ["고객_1", "고객_2", "고객_3"],
