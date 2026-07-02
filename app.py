@@ -711,45 +711,41 @@ st.markdown(
         background-color: #F6F7FB !important;
     }}
 
-
-    /* Text input / base input bright override */
-    div[data-baseweb="input"],
-    div[data-baseweb="base-input"] {
+    /* ---------- Form/input bright override ---------- */
+    div[data-testid="stTextInput"] div[data-baseweb="input"] {{
         background-color: #FFFFFF !important;
-        border-color: #D9DDE8 !important;
-        color: #181B2A !important;
-    }
-    div[data-baseweb="input"] input,
-    div[data-baseweb="base-input"] input {
-        background-color: #FFFFFF !important;
-        color: #181B2A !important;
-        -webkit-text-fill-color: #181B2A !important;
-    }
-    div[data-baseweb="input"] input::placeholder {
-        color: #868DA6 !important;
-    }
-
-    /* Number input bright override */
-    div[data-testid="stNumberInput"] div[data-baseweb="input"],
-    div[data-testid="stNumberInput"] input,
-    div[data-testid="stNumberInput"] button {
-        background-color: #FFFFFF !important;
-        color: #181B2A !important;
-        border-color: #D9DDE8 !important;
-        -webkit-text-fill-color: #181B2A !important;
-    }
-
-    /* Secondary buttons bright override */
-    .stButton > button:not([kind="primary"]) {
-        background-color: #FFFFFF !important;
-        color: #181B2A !important;
         border: 1px solid #D9DDE8 !important;
         border-radius: 10px !important;
-        font-weight: 700 !important;
-    }
-    .stButton > button:not([kind="primary"]) * {
+    }}
+    div[data-testid="stTextInput"] input {{
+        background-color: #FFFFFF !important;
         color: #181B2A !important;
-    }
+        -webkit-text-fill-color: #181B2A !important;
+    }}
+    div[data-testid="stTextInput"] input::placeholder {{
+        color: #9CA3AF !important;
+    }}
+    div[data-testid="stNumberInput"] div[data-baseweb="input"] {{
+        background-color: #FFFFFF !important;
+        border: 1px solid #D9DDE8 !important;
+        border-radius: 10px !important;
+    }}
+    div[data-testid="stNumberInput"] input {{
+        background-color: #FFFFFF !important;
+        color: #181B2A !important;
+        -webkit-text-fill-color: #181B2A !important;
+    }}
+    .manual-table-card {{
+        background: #FFFFFF;
+        border: 1px solid #E4E7F1;
+        border-radius: 16px;
+        padding: 18px 20px 8px 20px;
+        box-shadow: 0 2px 10px rgba(24, 27, 42, 0.04);
+        margin: 12px 0 24px 0;
+    }}
+    .manual-table-card p {{
+        color: #181B2A !important;
+    }}
 
     /* ---------- 알림 박스 ---------- */
     div[data-testid="stAlert"] {{
@@ -1343,6 +1339,7 @@ elif page == "🔮 예측 데모":
                 value=0 if force_no_visit else 4,
                 step=1,
                 disabled=force_no_visit,
+                key="single_total_access_slider",
             )
 
         if force_no_visit:
@@ -1540,76 +1537,90 @@ elif page == "🔮 예측 데모":
         st.subheader("수기 입력으로 여러 고객 예측")
         st.caption("행을 추가해서 여러 고객을 한 번에 입력할 수 있습니다. 빈 값은 지정된 결측치 처리 규칙에 따라 대체됩니다.")
 
-        st.markdown(
-            """
-            <div style="
-                background:#FFFFFF;
-                border:1px solid #E4E7F1;
-                border-radius:14px;
-                padding:16px 18px;
-                margin:10px 0 18px 0;
-                box-shadow:0 2px 10px rgba(24, 27, 42, 0.04);
-            ">
-                <b style="color:#181B2A;">입력 방식</b><br>
-                <span style="color:#3F4356;font-size:0.9rem;">
-                Streamlit Cloud에서 data_editor가 다크 테마로 렌더링되는 문제를 피하기 위해,
-                밝은 입력 카드 방식으로 여러 고객을 입력하도록 구성했습니다.
-                </span>
-            </div>
-            """,
-            unsafe_allow_html=True,
+        manual_count = st.slider(
+            "입력할 고객 수",
+            min_value=1,
+            max_value=10,
+            value=3,
+            step=1,
+            key="manual_customer_count",
         )
 
-        row_count = st.slider("입력할 고객 수", min_value=1, max_value=10, value=3, step=1)
-
         manual_rows = []
-        for i in range(row_count):
-            st.markdown("<div style='height:8px;'></div>", unsafe_allow_html=True)
-            with st.container():
-                c_id, c_visit, c_access, c_days = st.columns([1.15, 1, 1, 1.35])
-                with c_id:
-                    customer_id = st.text_input(
-                        f"고객ID {i+1}",
-                        value=f"고객_{i+1}",
-                        key=f"manual_customer_id_{i}",
-                    )
-                with c_visit:
-                    manual_visit_days = st.slider(
-                        f"방문일수 {i+1}",
-                        min_value=0,
-                        max_value=3,
-                        value=[2, 1, 0][i] if i < 3 else 0,
-                        step=1,
-                        key=f"manual_visit_days_{i}",
-                    )
-                with c_access:
-                    manual_access_count = st.slider(
-                        f"총출입횟수 {i+1}",
-                        min_value=0,
-                        max_value=TOTAL_ACCESS_MAX,
-                        value=[4, 2, 0][i] if i < 3 else 0,
-                        step=1,
-                        key=f"manual_access_count_{i}",
-                    )
-                with c_days:
-                    manual_days_to_first = st.select_slider(
-                        f"첫방문 소요일 {i+1}",
-                        options=DAYS_TO_FIRST_VALUES,
-                        value=[0, 1, -1][i] if i < 3 else -1,
-                        key=f"manual_days_to_first_{i}",
-                    )
+        default_values = [
+            {"고객ID": "고객_1", "방문일수": 2, "총출입횟수": 4, "신청후첫방문일수": 0},
+            {"고객ID": "고객_2", "방문일수": 1, "총출입횟수": 2, "신청후첫방문일수": 1},
+            {"고객ID": "고객_3", "방문일수": 0, "총출입횟수": 0, "신청후첫방문일수": -1},
+        ]
 
-                manual_rows.append({
-                    "고객ID": customer_id,
-                    "방문일수": manual_visit_days,
-                    "총출입횟수": manual_access_count,
-                    "신청후첫방문일수": manual_days_to_first,
-                })
+        st.markdown('<div class="manual-table-card">', unsafe_allow_html=True)
+        h1, h2, h3, h4 = st.columns([1.4, 1, 1, 1.4])
+        h1.markdown("**고객ID**")
+        h2.markdown("**방문일수**")
+        h3.markdown("**총출입횟수**")
+        h4.markdown("**신청 후 첫방문까지 걸린 일수**")
+
+        for i in range(manual_count):
+            defaults = default_values[i] if i < len(default_values) else {
+                "고객ID": f"고객_{i + 1}",
+                "방문일수": 0,
+                "총출입횟수": 0,
+                "신청후첫방문일수": -1,
+            }
+
+            c_id, c_visit, c_access, c_first = st.columns([1.4, 1, 1, 1.4])
+            with c_id:
+                customer_id = st.text_input(
+                    "고객ID",
+                    value=defaults["고객ID"],
+                    key=f"manual_customer_id_{i}",
+                    label_visibility="collapsed",
+                )
+            with c_visit:
+                visit_val = st.slider(
+                    "방문일수",
+                    0,
+                    3,
+                    int(defaults["방문일수"]),
+                    step=1,
+                    key=f"manual_visit_{i}",
+                    label_visibility="collapsed",
+                )
+            with c_access:
+                access_val = st.slider(
+                    "총출입횟수",
+                    0,
+                    TOTAL_ACCESS_MAX,
+                    int(defaults["총출입횟수"]),
+                    step=1,
+                    key=f"manual_access_{i}",
+                    label_visibility="collapsed",
+                )
+            with c_first:
+                first_val = st.select_slider(
+                    "신청 후 첫방문까지 걸린 일수",
+                    options=DAYS_TO_FIRST_VALUES,
+                    value=int(defaults["신청후첫방문일수"]),
+                    key=f"manual_first_{i}",
+                    label_visibility="collapsed",
+                )
+
+            if visit_val == 0 or first_val == -1:
+                visit_val = 0
+                access_val = 0
+                first_val = -1
+
+            manual_rows.append({
+                "고객ID": customer_id,
+                "방문일수": visit_val,
+                "총출입횟수": access_val,
+                "신청후첫방문일수": first_val,
+            })
+
+        st.markdown('</div>', unsafe_allow_html=True)
 
         edited_df = pd.DataFrame(manual_rows)
 
-        st.markdown("#### 입력 데이터 미리보기")
-        st.dataframe(edited_df, use_container_width=True, hide_index=True)
 
         if st.button("수기 입력 고객 예측하기", type="primary", use_container_width=True):
             try:
