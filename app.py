@@ -712,50 +712,43 @@ st.markdown(
     }}
 
 
-
-    /* ---------- Light theme hard-fix: number input / text input ---------- */
-    div[data-testid="stNumberInput"] div[data-baseweb="input"],
-    div[data-testid="stTextInput"] div[data-baseweb="input"],
-    div[data-testid="stSelectbox"] div[data-baseweb="select"],
-    div[data-baseweb="base-input"],
-    div[data-baseweb="input"] {
+    /* Text input / base input bright override */
+    div[data-baseweb="input"],
+    div[data-baseweb="base-input"] {
         background-color: #FFFFFF !important;
-        color: #181B2A !important;
         border-color: #D9DDE8 !important;
-        border-radius: 10px !important;
+        color: #181B2A !important;
     }
-    div[data-testid="stNumberInput"] input,
-    div[data-testid="stTextInput"] input,
     div[data-baseweb="input"] input,
     div[data-baseweb="base-input"] input {
         background-color: #FFFFFF !important;
         color: #181B2A !important;
         -webkit-text-fill-color: #181B2A !important;
     }
+    div[data-baseweb="input"] input::placeholder {
+        color: #868DA6 !important;
+    }
+
+    /* Number input bright override */
+    div[data-testid="stNumberInput"] div[data-baseweb="input"],
+    div[data-testid="stNumberInput"] input,
     div[data-testid="stNumberInput"] button {
         background-color: #FFFFFF !important;
         color: #181B2A !important;
         border-color: #D9DDE8 !important;
-    }
-    div[data-testid="stNumberInput"] button * {
-        color: #181B2A !important;
+        -webkit-text-fill-color: #181B2A !important;
     }
 
-    /* ---------- Data editor light-mode hard-fix ---------- */
-    div[data-testid="stDataEditor"] {
+    /* Secondary buttons bright override */
+    .stButton > button:not([kind="primary"]) {
         background-color: #FFFFFF !important;
-        border: 1px solid #E4E7F1 !important;
-        border-radius: 14px !important;
-        overflow: hidden !important;
-    }
-    div[data-testid="stDataEditor"] * {
         color: #181B2A !important;
+        border: 1px solid #D9DDE8 !important;
+        border-radius: 10px !important;
+        font-weight: 700 !important;
     }
-    div[data-testid="stDataEditor"] [class*="glideDataEditor"],
-    div[data-testid="stDataEditor"] [class*="dvn"],
-    div[data-testid="stDataEditor"] canvas,
-    div[data-testid="stDataEditor"] div[role="grid"] {
-        background-color: #FFFFFF !important;
+    .stButton > button:not([kind="primary"]) * {
+        color: #181B2A !important;
     }
 
     /* ---------- 알림 박스 ---------- */
@@ -1547,25 +1540,76 @@ elif page == "🔮 예측 데모":
         st.subheader("수기 입력으로 여러 고객 예측")
         st.caption("행을 추가해서 여러 고객을 한 번에 입력할 수 있습니다. 빈 값은 지정된 결측치 처리 규칙에 따라 대체됩니다.")
 
-        default_manual_df = pd.DataFrame({
-            "고객ID": ["고객_1", "고객_2", "고객_3"],
-            "방문일수": [2, 1, 0],
-            "총출입횟수": [4, 2, 0],
-            "신청후첫방문일수": [0, 1, -1],
-        })
-
-        edited_df = st.data_editor(
-            default_manual_df,
-            num_rows="dynamic",
-            use_container_width=True,
-            column_config={
-                "고객ID": st.column_config.TextColumn("고객ID"),
-                "방문일수": st.column_config.NumberColumn("방문일수", min_value=0, max_value=3, step=1),
-                "총출입횟수": st.column_config.NumberColumn("총출입횟수", min_value=0, max_value=TOTAL_ACCESS_MAX, step=1),
-                "신청후첫방문일수": st.column_config.NumberColumn("신청 후 첫방문까지 걸린 일수", min_value=-1, max_value=2, step=1),
-            },
-            key="manual_multi_input_editor",
+        st.markdown(
+            """
+            <div style="
+                background:#FFFFFF;
+                border:1px solid #E4E7F1;
+                border-radius:14px;
+                padding:16px 18px;
+                margin:10px 0 18px 0;
+                box-shadow:0 2px 10px rgba(24, 27, 42, 0.04);
+            ">
+                <b style="color:#181B2A;">입력 방식</b><br>
+                <span style="color:#3F4356;font-size:0.9rem;">
+                Streamlit Cloud에서 data_editor가 다크 테마로 렌더링되는 문제를 피하기 위해,
+                밝은 입력 카드 방식으로 여러 고객을 입력하도록 구성했습니다.
+                </span>
+            </div>
+            """,
+            unsafe_allow_html=True,
         )
+
+        row_count = st.slider("입력할 고객 수", min_value=1, max_value=10, value=3, step=1)
+
+        manual_rows = []
+        for i in range(row_count):
+            st.markdown("<div style='height:8px;'></div>", unsafe_allow_html=True)
+            with st.container():
+                c_id, c_visit, c_access, c_days = st.columns([1.15, 1, 1, 1.35])
+                with c_id:
+                    customer_id = st.text_input(
+                        f"고객ID {i+1}",
+                        value=f"고객_{i+1}",
+                        key=f"manual_customer_id_{i}",
+                    )
+                with c_visit:
+                    manual_visit_days = st.slider(
+                        f"방문일수 {i+1}",
+                        min_value=0,
+                        max_value=3,
+                        value=[2, 1, 0][i] if i < 3 else 0,
+                        step=1,
+                        key=f"manual_visit_days_{i}",
+                    )
+                with c_access:
+                    manual_access_count = st.slider(
+                        f"총출입횟수 {i+1}",
+                        min_value=0,
+                        max_value=TOTAL_ACCESS_MAX,
+                        value=[4, 2, 0][i] if i < 3 else 0,
+                        step=1,
+                        key=f"manual_access_count_{i}",
+                    )
+                with c_days:
+                    manual_days_to_first = st.select_slider(
+                        f"첫방문 소요일 {i+1}",
+                        options=DAYS_TO_FIRST_VALUES,
+                        value=[0, 1, -1][i] if i < 3 else -1,
+                        key=f"manual_days_to_first_{i}",
+                    )
+
+                manual_rows.append({
+                    "고객ID": customer_id,
+                    "방문일수": manual_visit_days,
+                    "총출입횟수": manual_access_count,
+                    "신청후첫방문일수": manual_days_to_first,
+                })
+
+        edited_df = pd.DataFrame(manual_rows)
+
+        st.markdown("#### 입력 데이터 미리보기")
+        st.dataframe(edited_df, use_container_width=True, hide_index=True)
 
         if st.button("수기 입력 고객 예측하기", type="primary", use_container_width=True):
             try:
