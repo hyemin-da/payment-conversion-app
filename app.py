@@ -711,39 +711,45 @@ st.markdown(
         background-color: #F6F7FB !important;
     }}
 
-    /* ---------- Form/input bright override ---------- */
-    div[data-testid="stTextInput"] div[data-baseweb="input"] {{
+
+
+    /* ---------- Bright mode fixes for number_input / text_input ---------- */
+    div[data-baseweb="input"],
+    div[data-baseweb="base-input"] {{
         background-color: #FFFFFF !important;
-        border: 1px solid #D9DDE8 !important;
-        border-radius: 10px !important;
+        border-color: #D9DDE8 !important;
+        color: #181B2A !important;
     }}
-    div[data-testid="stTextInput"] input {{
+    div[data-baseweb="input"] input,
+    div[data-baseweb="base-input"] input {{
         background-color: #FFFFFF !important;
         color: #181B2A !important;
         -webkit-text-fill-color: #181B2A !important;
     }}
-    div[data-testid="stTextInput"] input::placeholder {{
-        color: #9CA3AF !important;
-    }}
-    div[data-testid="stNumberInput"] div[data-baseweb="input"] {{
-        background-color: #FFFFFF !important;
-        border: 1px solid #D9DDE8 !important;
-        border-radius: 10px !important;
-    }}
-    div[data-testid="stNumberInput"] input {{
+    div[data-baseweb="input"] button,
+    div[data-baseweb="base-input"] button {{
         background-color: #FFFFFF !important;
         color: #181B2A !important;
-        -webkit-text-fill-color: #181B2A !important;
+        border-color: #D9DDE8 !important;
     }}
-    .manual-table-card {{
-        background: #FFFFFF;
-        border: 1px solid #E4E7F1;
-        border-radius: 16px;
-        padding: 18px 20px 8px 20px;
-        box-shadow: 0 2px 10px rgba(24, 27, 42, 0.04);
-        margin: 12px 0 24px 0;
+    div[data-baseweb="input"] button *,
+    div[data-baseweb="base-input"] button * {{
+        color: #181B2A !important;
+        fill: #181B2A !important;
     }}
-    .manual-table-card p {{
+
+    /* ---------- Bright mode fixes for data editor without replacing it ---------- */
+    div[data-testid="stDataEditor"] {{
+        background-color: #FFFFFF !important;
+        border: 1px solid #E4E7F1 !important;
+        border-radius: 12px !important;
+        overflow: hidden !important;
+    }}
+    div[data-testid="stDataEditor"] iframe,
+    div[data-testid="stDataEditor"] canvas {{
+        background-color: #FFFFFF !important;
+    }}
+    div[data-testid="stDataEditor"] * {{
         color: #181B2A !important;
     }}
 
@@ -1332,14 +1338,13 @@ elif page == "🔮 예측 데모":
         force_no_visit = (visit_days_raw == 0) or (days_to_first_raw == -1)
 
         with col3:
-            total_access_raw = st.slider(
+            total_access_raw = st.number_input(
                 "총 출입횟수",
                 min_value=0,
                 max_value=TOTAL_ACCESS_MAX,
                 value=0 if force_no_visit else 4,
                 step=1,
                 disabled=force_no_visit,
-                key="single_total_access_slider",
             )
 
         if force_no_visit:
@@ -1537,90 +1542,25 @@ elif page == "🔮 예측 데모":
         st.subheader("수기 입력으로 여러 고객 예측")
         st.caption("행을 추가해서 여러 고객을 한 번에 입력할 수 있습니다. 빈 값은 지정된 결측치 처리 규칙에 따라 대체됩니다.")
 
-        manual_count = st.slider(
-            "입력할 고객 수",
-            min_value=1,
-            max_value=10,
-            value=3,
-            step=1,
-            key="manual_customer_count",
+        default_manual_df = pd.DataFrame({
+            "고객ID": ["고객_1", "고객_2", "고객_3"],
+            "방문일수": [2, 1, 0],
+            "총출입횟수": [4, 2, 0],
+            "신청후첫방문일수": [0, 1, -1],
+        })
+
+        edited_df = st.data_editor(
+            default_manual_df,
+            num_rows="dynamic",
+            use_container_width=True,
+            column_config={
+                "고객ID": st.column_config.TextColumn("고객ID"),
+                "방문일수": st.column_config.NumberColumn("방문일수", min_value=0, max_value=3, step=1),
+                "총출입횟수": st.column_config.NumberColumn("총출입횟수", min_value=0, max_value=TOTAL_ACCESS_MAX, step=1),
+                "신청후첫방문일수": st.column_config.NumberColumn("신청 후 첫방문까지 걸린 일수", min_value=-1, max_value=2, step=1),
+            },
+            key="manual_multi_input_editor",
         )
-
-        manual_rows = []
-        default_values = [
-            {"고객ID": "고객_1", "방문일수": 2, "총출입횟수": 4, "신청후첫방문일수": 0},
-            {"고객ID": "고객_2", "방문일수": 1, "총출입횟수": 2, "신청후첫방문일수": 1},
-            {"고객ID": "고객_3", "방문일수": 0, "총출입횟수": 0, "신청후첫방문일수": -1},
-        ]
-
-        st.markdown('<div class="manual-table-card">', unsafe_allow_html=True)
-        h1, h2, h3, h4 = st.columns([1.4, 1, 1, 1.4])
-        h1.markdown("**고객ID**")
-        h2.markdown("**방문일수**")
-        h3.markdown("**총출입횟수**")
-        h4.markdown("**신청 후 첫방문까지 걸린 일수**")
-
-        for i in range(manual_count):
-            defaults = default_values[i] if i < len(default_values) else {
-                "고객ID": f"고객_{i + 1}",
-                "방문일수": 0,
-                "총출입횟수": 0,
-                "신청후첫방문일수": -1,
-            }
-
-            c_id, c_visit, c_access, c_first = st.columns([1.4, 1, 1, 1.4])
-            with c_id:
-                customer_id = st.text_input(
-                    "고객ID",
-                    value=defaults["고객ID"],
-                    key=f"manual_customer_id_{i}",
-                    label_visibility="collapsed",
-                )
-            with c_visit:
-                visit_val = st.slider(
-                    "방문일수",
-                    0,
-                    3,
-                    int(defaults["방문일수"]),
-                    step=1,
-                    key=f"manual_visit_{i}",
-                    label_visibility="collapsed",
-                )
-            with c_access:
-                access_val = st.slider(
-                    "총출입횟수",
-                    0,
-                    TOTAL_ACCESS_MAX,
-                    int(defaults["총출입횟수"]),
-                    step=1,
-                    key=f"manual_access_{i}",
-                    label_visibility="collapsed",
-                )
-            with c_first:
-                first_val = st.select_slider(
-                    "신청 후 첫방문까지 걸린 일수",
-                    options=DAYS_TO_FIRST_VALUES,
-                    value=int(defaults["신청후첫방문일수"]),
-                    key=f"manual_first_{i}",
-                    label_visibility="collapsed",
-                )
-
-            if visit_val == 0 or first_val == -1:
-                visit_val = 0
-                access_val = 0
-                first_val = -1
-
-            manual_rows.append({
-                "고객ID": customer_id,
-                "방문일수": visit_val,
-                "총출입횟수": access_val,
-                "신청후첫방문일수": first_val,
-            })
-
-        st.markdown('</div>', unsafe_allow_html=True)
-
-        edited_df = pd.DataFrame(manual_rows)
-
 
         if st.button("수기 입력 고객 예측하기", type="primary", use_container_width=True):
             try:
